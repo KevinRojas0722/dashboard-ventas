@@ -10,7 +10,7 @@ from datetime import date
 import random
 import os
 
-fake = Faker("es_MX")
+fake = Faker("es")
 rng = np.random.default_rng(seed=42)  # seed fija para reproducibilidad
 
 # ── Catálogos ────────────────────────────────────────────────────────────────
@@ -51,21 +51,22 @@ PRODUCTOS = {
     ],
 }
 
+# Provincias de Costa Rica con distribución proporcional a su actividad comercial
 REGIONES = {
-    "CDMX":       0.28,
-    "Monterrey":  0.20,
-    "Guadalajara": 0.18,
-    "Puebla":     0.12,
-    "Tijuana":    0.10,
-    "Mérida":     0.07,
-    "León":       0.05,
+    "San José":    0.35,
+    "Alajuela":    0.20,
+    "Heredia":     0.17,
+    "Cartago":     0.13,
+    "Guanacaste":  0.07,
+    "Puntarenas":  0.05,
+    "Limón":       0.03,
 }
 
 VENDEDORES = [
-    "Ana García", "Carlos López", "María Hernández",
-    "José Martínez", "Laura Rodríguez", "Luis González",
-    "Sofía Pérez", "Diego Torres", "Valentina Ramírez",
-    "Andrés Flores",
+    "Andrea Mora", "Carlos Quesada", "María Solís",
+    "José Vargas", "Laura Jiménez", "Luis Arias",
+    "Sofía Brenes", "Diego Rojas", "Valeria Monge",
+    "Andrés Campos",
 ]
 
 # ── Helpers ──────────────────────────────────────────────────────────────────

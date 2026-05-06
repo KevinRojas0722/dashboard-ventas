@@ -7,13 +7,44 @@ import pandas as pd
 import plotly.express as px
 import plotly.graph_objects as go
 
-# Paleta consistente en todo el dashboard
-COLORES = px.colors.qualitative.Set2
-COLOR_PRIMARIO = "#2E86AB"
+COLOR_PRIMARIO  = "#4F8EF7"   # azul eléctrico
+COLOR_ACENTO    = "#00C9A7"   # teal
+COLOR_TEXTO     = "#E2E8F0"   # gris claro para labels en fondo oscuro
+FONDO_GRAFICO   = "#1E293B"   # azul oscuro para el area del gráfico
+FONDO_PAPEL     = "#1E293B"
+
+PALETA = ["#4F8EF7", "#00C9A7", "#F59E0B", "#F472B6", "#A78BFA", "#34D399", "#FB923C"]
+
+
+def _layout_base(titulo: str, alto: int = 340) -> dict:
+    return dict(
+        title=dict(text=titulo, font=dict(size=14, color="#94A3B8"), x=0),
+        paper_bgcolor=FONDO_PAPEL,
+        plot_bgcolor=FONDO_GRAFICO,
+        font=dict(family="Segoe UI, sans-serif", color="#94A3B8", size=11),
+        margin=dict(l=12, r=12, t=44, b=12),
+        height=alto,
+    )
+
+
+def _ejes_oscuros(fig: go.Figure) -> go.Figure:
+    fig.update_xaxes(
+        showgrid=False,
+        linecolor="#334155",
+        tickcolor="#334155",
+        tickfont=dict(color="#64748B", size=10),
+    )
+    fig.update_yaxes(
+        gridcolor="#334155",
+        linecolor="#334155",
+        tickfont=dict(color="#64748B", size=10),
+        zeroline=False,
+    )
+    return fig
 
 
 def grafico_tendencia(df: pd.DataFrame) -> go.Figure:
-    """Línea de ventas totales agrupadas por mes."""
+    """Área con gradiente de ventas mensuales. Marca el mes pico."""
     ventas_mes = (
         df.groupby(df["fecha"].dt.to_period("M"))["total"]
         .sum()
@@ -21,25 +52,49 @@ def grafico_tendencia(df: pd.DataFrame) -> go.Figure:
     )
     ventas_mes["fecha"] = ventas_mes["fecha"].dt.to_timestamp()
 
-    fig = px.line(
-        ventas_mes,
-        x="fecha",
-        y="total",
-        title="Tendencia de Ventas Mensuales",
-        labels={"fecha": "Mes", "total": "Ventas ($)"},
-        color_discrete_sequence=[COLOR_PRIMARIO],
-    )
-    fig.update_traces(mode="lines+markers", marker_size=5)
+    idx_pico = ventas_mes["total"].idxmax()
+
+    fig = go.Figure()
+
+    # Área de relleno degradado
+    fig.add_trace(go.Scatter(
+        x=ventas_mes["fecha"],
+        y=ventas_mes["total"],
+        fill="tozeroy",
+        fillgradient=dict(
+            type="vertical",
+            colorscale=[[0, "rgba(0,201,167,0.0)"], [1, "rgba(79,142,247,0.35)"]],
+        ),
+        line=dict(color=COLOR_PRIMARIO, width=2),
+        mode="lines",
+        name="Ventas",
+        hovertemplate="<b>%{x|%b %Y}</b><br>₡%{y:,.0f}<extra></extra>",
+    ))
+
+    # Punto y etiqueta del mes pico
+    fig.add_trace(go.Scatter(
+        x=[ventas_mes.loc[idx_pico, "fecha"]],
+        y=[ventas_mes.loc[idx_pico, "total"]],
+        mode="markers+text",
+        marker=dict(size=10, color=COLOR_ACENTO, symbol="circle"),
+        text=[f"₡{ventas_mes.loc[idx_pico, 'total']:,.0f}"],
+        textposition="top center",
+        textfont=dict(color=COLOR_ACENTO, size=10),
+        showlegend=False,
+        hoverinfo="skip",
+    ))
+
     fig.update_layout(
+        yaxis_tickformat="₡,.0f",
         hovermode="x unified",
-        yaxis_tickformat="$,.0f",
-        title_font_size=16,
+        showlegend=False,
+        **_layout_base("Tendencia de Ventas Mensuales"),
     )
-    return fig
+    return _ejes_oscuros(fig)
 
 
 def grafico_top_productos(df: pd.DataFrame, top_n: int = 10) -> go.Figure:
-    """Barras horizontales con los productos más vendidos por ingresos."""
+    """Barras horizontales con gradiente de color por valor."""
     top = (
         df.groupby("producto")["total"]
         .sum()
@@ -48,52 +103,74 @@ def grafico_top_productos(df: pd.DataFrame, top_n: int = 10) -> go.Figure:
         .reset_index()
     )
 
-    fig = px.bar(
-        top,
-        x="total",
-        y="producto",
+    fig = go.Figure(go.Bar(
+        x=top["total"],
+        y=top["producto"],
         orientation="h",
-        title=f"Top {top_n} Productos por Ingresos",
-        labels={"total": "Ventas ($)", "producto": ""},
-        color="total",
-        color_continuous_scale="Blues",
-    )
+        marker=dict(
+            color=top["total"],
+            colorscale=[[0, "#1E3A5F"], [0.5, COLOR_PRIMARIO], [1, COLOR_ACENTO]],
+            showscale=False,
+            line=dict(width=0),
+        ),
+        hovertemplate="<b>%{y}</b><br>₡%{x:,.0f}<extra></extra>",
+    ))
     fig.update_layout(
-        xaxis_tickformat="$,.0f",
-        coloraxis_showscale=False,
-        title_font_size=16,
+        xaxis_tickformat="₡,.0f",
+        **_layout_base(f"Top {top_n} Productos por Ingresos"),
     )
-    return fig
+    return _ejes_oscuros(fig)
 
 
 def grafico_ventas_region(df: pd.DataFrame) -> go.Figure:
-    """Pie chart de participación de ventas por región."""
+    """Barras horizontales por provincia con porcentaje de participación."""
     por_region = (
         df.groupby("region")["total"]
         .sum()
+        .sort_values(ascending=True)
         .reset_index()
-        .sort_values("total", ascending=False)
     )
+    total_global = por_region["total"].sum()
+    por_region["pct"] = (por_region["total"] / total_global * 100).round(1)
 
-    fig = px.pie(
-        por_region,
-        values="total",
-        names="region",
-        title="Ventas por Región",
-        color_discrete_sequence=COLORES,
-        hole=0.35,  # donut chart, más moderno que pie sólido
-    )
-    fig.update_traces(textposition="inside", textinfo="percent+label")
+    fig = go.Figure()
+
+    # Barra de fondo (100%) como referencia visual
+    fig.add_trace(go.Bar(
+        x=[total_global] * len(por_region),
+        y=por_region["region"],
+        orientation="h",
+        marker=dict(color="#1E3A5F", line=dict(width=0)),
+        showlegend=False,
+        hoverinfo="skip",
+    ))
+
+    # Barra real con valor
+    fig.add_trace(go.Bar(
+        x=por_region["total"],
+        y=por_region["region"],
+        orientation="h",
+        marker=dict(
+            color=PALETA[:len(por_region)],
+            line=dict(width=0),
+        ),
+        text=[f"{p}%" for p in por_region["pct"]],
+        textposition="outside",
+        textfont=dict(color="#94A3B8", size=10),
+        hovertemplate="<b>%{y}</b><br>₡%{x:,.0f} (%{text})<extra></extra>",
+        showlegend=False,
+    ))
+
     fig.update_layout(
-        title_font_size=16,
-        showlegend=True,
-        legend=dict(orientation="v", x=1, y=0.5),
+        barmode="overlay",
+        xaxis_tickformat="₡,.0f",
+        **_layout_base("Ventas por Provincia"),
     )
-    return fig
+    return _ejes_oscuros(fig)
 
 
 def grafico_ventas_categoria(df: pd.DataFrame) -> go.Figure:
-    """Barras agrupadas de ventas por categoría y mes."""
+    """Barras apiladas por categoría y mes."""
     ventas = (
         df.groupby([df["fecha"].dt.to_period("M"), "categoria"])["total"]
         .sum()
@@ -101,19 +178,28 @@ def grafico_ventas_categoria(df: pd.DataFrame) -> go.Figure:
     )
     ventas["fecha"] = ventas["fecha"].dt.to_timestamp()
 
-    fig = px.bar(
-        ventas,
-        x="fecha",
-        y="total",
-        color="categoria",
-        title="Ventas Mensuales por Categoría",
-        labels={"fecha": "Mes", "total": "Ventas ($)", "categoria": "Categoría"},
-        color_discrete_sequence=COLORES,
-    )
+    fig = go.Figure()
+    for i, cat in enumerate(sorted(ventas["categoria"].unique())):
+        subset = ventas[ventas["categoria"] == cat]
+        fig.add_trace(go.Bar(
+            x=subset["fecha"],
+            y=subset["total"],
+            name=cat,
+            marker=dict(color=PALETA[i % len(PALETA)], line=dict(width=0)),
+            hovertemplate=f"<b>{cat}</b><br>%{{x|%b %Y}}<br>₡%{{y:,.0f}}<extra></extra>",
+        ))
+
     fig.update_layout(
-        yaxis_tickformat="$,.0f",
+        barmode="stack",
+        yaxis_tickformat="₡,.0f",
         hovermode="x unified",
-        title_font_size=16,
-        legend=dict(orientation="h", yanchor="bottom", y=1.02, xanchor="right", x=1),
+        legend=dict(
+            orientation="h",
+            yanchor="bottom", y=1.02,
+            xanchor="right", x=1,
+            font=dict(size=10, color="#94A3B8"),
+            bgcolor="rgba(0,0,0,0)",
+        ),
+        **_layout_base("Ventas por Categoría y Mes"),
     )
-    return fig
+    return _ejes_oscuros(fig)
