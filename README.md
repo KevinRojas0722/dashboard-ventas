@@ -1,30 +1,30 @@
-# Dashboard de Análisis de Ventas — Costa Rica
+# 📊 Dashboard de Análisis de Ventas — Costa Rica
 
 Interactive BI sales dashboard built with Python and Streamlit, focused on portfolio Data Analyst / BI Junior positions.
 
-## Features
+## ✨ Features
 
 | Section | Description |
 |---|---|
-| KPIs | Total sales, average ticket, transactions and unique clients |
-| Trend | Monthly sales with degraded area and peak month |
-| By province | Horizontal bars with % of participation per province in CR |
-| Top products | Top 10 products by revenue with color gradient |
-| By category | Stacked bars per product category |
-| Filters | Sidebar with date range, province and category; real-time refresh |
-| Table | Collapsible table of transactions |
+| 📈 KPIs | Total sales, average ticket, transactions and unique clients |
+| 📉 Trend | Monthly sales with degraded area and peak month |
+| 🌎 By province | Horizontal bars with % of participation per province in CR |
+| 🏆 Top products | Top 10 products by revenue with color gradient |
+| 📦 By category | Stacked bars per product category |
+| 🔍 Filters | Sidebar with date range, province and category; real-time refresh |
+| 📋 Table | Collapsible table of transactions |
 
-## Tech stack
+## 🛠️ Tech stack
 
 | Tool | Use |
 |---|---|
-| Python 3.11 | Base language |
-| Streamlit 1.57 | Dashboard framework |
-| Pandas 3.0 | Data analysis and transformation |
-| Plotly 6.7 | Interactive charts |
-| Faker + NumPy | Realistic synthetic data generation |
+| 🐍 Python 3.11 | Base language |
+| 🎨 Streamlit 1.57 | Dashboard framework |
+| 🐼 Pandas 3.0 | Data analysis and transformation |
+| 📊 Plotly 6.7 | Interactive charts |
+| 🎲 Faker + NumPy | Realistic synthetic data generation |
 
-## How to run it locally
+## 🚀 How to run it locally
 
 ```bash
 # 1. Clone the repository
@@ -46,9 +46,9 @@ python data/generar_datos.py
 streamlit run app/main.py
 ```
 
-Open `http://localhost:8501` in your browser.
+🌐 Open `http://localhost:8501` in your browser.
 
-## Project structure
+## 📁 Project structure
 
 ```
 dashboard-ventas/
@@ -68,16 +68,18 @@ dashboard-ventas/
 └── README.md
 ```
 
-## Dataset
+## 📊 Dataset
 
 The synthetic but realistic dataset, generated with `data/generar_datos.py`:
 
-- **5,000 transactions** between January 2024 and December 2025
-- **7 provinces** of Costa Rica with commercial activity-based distribution
-- **23 products in 4 categories** (Electronics, Office, Software, Accessories)
-- **~400 unique clients** with variable purchase frequency
-- **Seasonality incorporated** with peaks in November–December and sales
+- 🧾 **5,000 transactions** between January 2024 and December 2025
+- 🇨🇷 **7 provinces** of Costa Rica with commercial activity-based distribution
+- 📦 **23 products in 4 categories** (Electronics, Office, Software, Accessories)
+- 👥 **~400 unique clients** with variable purchase frequency
+- 📅 **Seasonality incorporated** with peaks in November–December and sales
 
-## Author
+## 👤 Author
 
-Kevin Rojas Hernández — [GitHub](https://github.com/KevinRojas0722) · [LinkedIn](https://www.linkedin.com/in/kevin-rojas-hernandez-dev)
+**Kevin Rojas Hernández**
+
+🔗 [GitHub](https://github.com/KevinRojas0722) · 💼 [LinkedIn](https://www.linkedin.com/in/kevin-rojas-hernandez-dev) · 📧 kevinrh2000@gmail.com
