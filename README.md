@@ -1,95 +1,83 @@
-# 📊 Dashboard de Análisis de Ventas — Costa Rica
+# Dashboard de Análisis de Ventas — Costa Rica
 
-Dashboard interactivo de ventas estilo BI construido con Python y Streamlit, orientado a portafolio para puestos de **Analista de Datos / BI Junior**.
+Interactive BI sales dashboard built with Python and Streamlit, focused on portfolio Data Analyst / BI Junior positions.
 
----
+## Features
 
-## Funcionalidades
+| Section | Description |
+|---|---|
+| KPIs | Total sales, average ticket, transactions and unique clients |
+| Trend | Monthly sales with degraded area and peak month |
+| By province | Horizontal bars with % of participation per province in CR |
+| Top products | Top 10 products by revenue with color gradient |
+| By category | Stacked bars per product category |
+| Filters | Sidebar with date range, province and category; real-time refresh |
+| Table | Collapsible table of transactions |
 
-| Sección | Descripción |
-|---------|-------------|
-| **KPIs** | Ventas totales, ticket promedio, transacciones y clientes únicos |
-| **Tendencia** | Ventas mensuales con área degradada y marca del mes pico |
-| **Por provincia** | Barras horizontales con % de participación por provincia de CR |
-| **Top productos** | Los 10 productos con mayor ingreso con gradiente de color |
-| **Por categoría** | Barras apiladas mensuales por categoría de producto |
-| **Filtros** | Sidebar con rango de fechas, provincia y categoría; resumen en tiempo real |
-| **Tabla** | Detalle de transacciones colapsable |
+## Tech stack
 
----
+| Tool | Use |
+|---|---|
+| Python 3.11 | Base language |
+| Streamlit 1.57 | Dashboard framework |
+| Pandas 3.0 | Data analysis and transformation |
+| Plotly 6.7 | Interactive charts |
+| Faker + NumPy | Realistic synthetic data generation |
 
-## Stack tecnológico
-
-| Herramienta | Uso |
-|------------|-----|
-| **Python 3.11** | Lenguaje base |
-| **Streamlit 1.57** | Framework del dashboard |
-| **Pandas 3.0** | Análisis y transformación de datos |
-| **Plotly 6.7** | Gráficos interactivos |
-| **Faker + NumPy** | Generación de datos sintéticos realistas |
-
----
-
-## Cómo ejecutarlo localmente
+## How to run it locally
 
 ```bash
-# 1. Clonar el repositorio
+# 1. Clone the repository
 git clone https://github.com/KevinRojas0722/dashboard-ventas.git
 cd dashboard-ventas
 
-# 2. Crear y activar el entorno virtual
+# 2. Create and activate the virtual environment
 python -m venv venv
-source venv/Scripts/activate   # Windows
-# source venv/bin/activate     # Mac/Linux
+source venv/Scripts/activate     # Windows
+source venv/bin/activate         # Mac/Linux
 
-# 3. Instalar dependencias
+# 3. Install dependencies
 pip install -r requirements.txt
 
-# 4. Generar el dataset de ventas
+# 4. Generate the sales dataset
 python data/generar_datos.py
 
-# 5. Ejecutar el dashboard
+# 5. Run the app
 streamlit run app/main.py
 ```
 
-Abre [http://localhost:8501](http://localhost:8501) en tu navegador.
+Open `http://localhost:8501` in your browser.
 
----
-
-## Estructura del proyecto
+## Project structure
 
 ```
 dashboard-ventas/
 ├── .streamlit/
-│   └── config.toml         # Tema oscuro y configuración del servidor
+│   └── config.toml              # Dark theme and server configuration
 ├── app/
-│   ├── main.py             # Entry point — layout y lógica de UI
-│   ├── kpis.py             # Cálculo de KPIs principales
-│   ├── graficos.py         # Componentes de visualización (Plotly)
-│   └── utils.py            # Carga de datos con caché y filtros
+│   ├── main.py                  # Entry point — layout and KPIs
+│   ├── api.py                   # Aggregations and metrics calculation
+│   ├── charts.py                # Visualization components (Plotly)
+│   └── utils.py                 # Data loading and filters
 ├── data/
-│   ├── generar_datos.py    # Genera ventas.csv con datos sintéticos realistas
-│   └── ventas.csv          # Dataset generado (~5,000 transacciones, 2024–2025)
+│   ├── generar_datos.py         # Generates realistic sales data with Faker
+│   └── ventas.csv               # Generated dataset (~5,000 transactions, 2024–2025)
 ├── notebooks/
-│   └── exploracion.ipynb   # Análisis exploratorio con hallazgos clave
+│   └── exploracion.ipynb        # Exploratory analysis and key findings
 ├── requirements.txt
 └── README.md
 ```
 
----
-
 ## Dataset
 
-El dataset es sintético pero realista, generado con `data/generar_datos.py`:
+The synthetic but realistic dataset, generated with `data/generar_datos.py`:
 
-- **5,000 transacciones** entre enero 2024 y diciembre 2025
-- **7 provincias** de Costa Rica con distribución proporcional a actividad comercial
-- **23 productos** en 4 categorías (Electrónica, Oficina, Software, Accesorios)
-- **~800 clientes únicos** con frecuencia de compra variable
-- Estacionalidad incorporada: picos en noviembre–diciembre y enero
+- **5,000 transactions** between January 2024 and December 2025
+- **7 provinces** of Costa Rica with commercial activity-based distribution
+- **23 products in 4 categories** (Electronics, Office, Software, Accessories)
+- **~400 unique clients** with variable purchase frequency
+- **Seasonality incorporated** with peaks in November–December and sales
 
----
+## Author
 
-## Autor
-
-**Kevin Rojas Hernández** — [GitHub](https://github.com/KevinRojas0722) · [LinkedIn](https://www.linkedin.com/in/kevin-rojas-hernandez-dev)
+Kevin Rojas Hernández — [GitHub](https://github.com/KevinRojas0722) · [LinkedIn](https://www.linkedin.com/in/kevin-rojas-hernandez-dev)
